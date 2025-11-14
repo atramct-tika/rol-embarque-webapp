@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rol de embarque · Caducidades</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --bg-alt: #ffffff;
+      --primary: #1f6feb;
+      --primary-soft: #e0ecff;
+      --danger: #e11d48;
+      --warning: #f59e0b;
+      --success: #16a34a;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --radius-lg: 14px;
+      --radius-sm: 8px;
+      --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top left, #dbeafe, #f4f6fb 50%, #e5e7eb);
+      color: var(--text);
+    }
+
+    .app-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0f766e, #0ea5e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 18px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .brand-title {
+      font-weight: 700;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .pill {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(31, 111, 235, 0.08);
+      color: var(--primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      background: rgba(255,255,255,0.6);
+      padding: 4px;
+      border-radius: 999px;
+      box-shadow: 0 4px 18px rgba(15,23,42,0.06);
+    }
+
+    .tab-btn {
+      border: none;
+      background: transparent;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s, color 0.15s, transform 0.05s;
+      white-space: nowrap;
+    }
+
+    .tab-btn span.icon {
+      font-size: 14px;
+    }
+
+    .tab-btn.active {
+      background: var(--bg-alt);
+      color: var(--primary);
+      box-shadow: 0 4px 13px rgba(15,23,42,0.08);
+      transform: translateY(-1px);
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 900px) {
+      main {
+        grid-template-columns: minmax(0, 1.3fr) minmax(260px, 0.85fr);
+        align-items: flex-start;
+      }
+    }
+
+    .card {
+      background: rgba(255,255,255,0.92);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(148,163,184,0.15);
+      backdrop-filter: blur(12px);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .cards-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    @media (min-width: 700px) {
+      .cards-row {
+        grid-template-columns: repeat(4, minmax(0,1fr));
+      }
+    }
+
+    .stat-card {
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(248,250,252,0.9));
+      border: 1px solid rgba(148,163,184,0.28);
+      display: grid;
+      row-gap: 2px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .stat-chip {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(31,111,235,0.06);
+      color: var(--primary);
+      margin-top: 2px;
+      display: inline-block;
+      max-width: 100%;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .toolbar-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    select, input[type="text"], input[type="date"], input[type="number"], textarea {
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      font-size: 12px;
+      outline: none;
+      min-width: 0;
+      background: rgba(255,255,255,0.9);
+    }
+
+    textarea {
+      border-radius: 10px;
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(37,99,235,0.3);
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.35);
+      transition: transform 0.05s, box-shadow 0.1s, opacity 0.1s;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(37,99,235,0.4);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 0 3px 10px rgba(37,99,235,0.3);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid rgba(148,163,184,0.7);
+      box-shadow: none;
+    }
+
+    .btn-outline.danger {
+      color: var(--danger);
+      border-color: rgba(239,68,68,0.5);
+    }
+
+    .chip-status {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .chip-status.expired {
+      background: rgba(248,113,113,0.2);
+      color: #b91c1c;
+    }
+
+    .chip-status.soon {
+      background: rgba(251,191,36,0.2);
+      color: #92400e;
+    }
+
+    .chip-status.ok {
+      background: rgba(52,211,153,0.18);
+      color: #047857;
+    }
+
+    .chip-status.unknown {
+      background: rgba(148,163,184,0.25);
+      color: #4b5563;
+    }
+
+    .table-container {
+      border-radius: var(--radius-sm);
+      overflow: auto;
+      border: 1px solid rgba(148,163,184,0.4);
+      background: rgba(248,250,252,0.9);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    thead {
+      background: rgba(226,232,240,0.7);
+    }
+
+    th, td {
+      padding: 6px 8px;
+      text-align: left;
+      border-bottom: 1px solid rgba(226,232,240,0.9);
+      white-space: nowrap;
+    }
+
+    th {
+      font-weight: 600;
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    tbody tr:hover {
+      background: rgba(219,234,254,0.4);
+    }
+
+    .table-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(15,118,110,0.08);
+      color: #0f766e;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    @media (min-width: 700px) {
+      .form-grid.columns-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field label {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .field small {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .badge-boat {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(37,99,235,0.07);
+      color: #1d4ed8;
+    }
+
+    .badge-category {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(14,116,144,0.1);
+      color: #0e7490;
+    }
+
+    .danger-text {
+      color: var(--danger);
+      font-weight: 500;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .notification-preview {
+      background: #020617;
+      color: #e5e7eb;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 11px;
+      padding: 8px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      max-height: 180px;
+      overflow: auto;
+    }
+
+    .switch-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .switch-row input[type="checkbox"] {
+      width: 32px;
+      height: 16px;
+      border-radius: 999px;
+      appearance: none;
+      background: #e5e7eb;
+      position: relative;
+      outline: none;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .switch-row input[type="checkbox"]::before {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: white;
+      box-shadow: 0 1px 3px rgba(15,23,42,0.35);
+      transition: transform 0.15s;
+    }
+
+    .switch-row input[type="checkbox"]:checked {
+      background: #22c55e;
+    }
+
+    .switch-row input[type="checkbox"]:checked::before {
+      transform: translateX(14px);
+    }
+
+    .empty {
+      padding: 8px 4px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    footer {
+      margin-top: 10px;
+      text-align: right;
+      font-size: 10px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header>
+      <div class="brand">
+        <div class="brand-icon">⛵</div>
+        <div>
+          <div class="brand-title">Rol de embarque · Caducidades</div>
+          <div class="brand-subtitle">Control de documentación por barco, con avisos automáticos</div>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
+        <div class="pill">
+          <span>Modo administrador</span>
+        </div>
+        <div class="tabs" id="tabs">
+          <button class="tab-btn active" data-target="dashboard"><span class="icon">📊</span>Panel</button>
+          <button class="tab-btn" data-target="boats"><span class="icon">🚤</span>Embarcaciones</button>
+          <button class="tab-btn" data-target="documents"><span class="icon">📄</span>Documentos</button>
+          <button class="tab-btn" data-target="settings"><span class="icon">⚙️</span>Notificaciones</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Columna principal -->
+      <section id="main-left">
+        <!-- Panel -->
+        <div class="section active" id="section-dashboard">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Resumen general</div>
+                <div class="card-subtitle">Estado actual de la documentación de todas las embarcaciones.</div>
+              </div>
+              <button class="btn-outline btn" id="btn-simulate">
+                <span>Simular avisos hoy</span>
+              </button>
+            </div>
+
+            <div class="cards-row" id="stats-cards">
+              <!-- Estadísticas se pintan por JS -->
+            </div>
+
+            <div class="toolbar">
+              <div class="toolbar-group">
+                <select id="dashboard-filter-status">
+                  <option value="">Estado: todos</option>
+                  <option value="expired">Caducados</option>
+                  <option value="soon">Próximos</option>
+                  <option value="ok">Vigentes</option>
+                </select>
+                <select id="dashboard-filter-boat">
+                  <!-- barcos en JS -->
+                </select>
+              </div>
+              <div class="toolbar-group">
+                <input type="text" id="dashboard-search" placeholder="Buscar por documento / barco…" />
+              </div>
+            </div>
+
+            <div class="table-container" id="dashboard-table-container">
+              <!-- tabla por JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Embarcaciones -->
+        <div class="section" id="section-boats">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Embarcaciones</div>
+                <div class="card-subtitle">Gestiona tus barcos y su documentación asociada.</div>
+              </div>
+              <button class="btn" id="btn-new-boat">+ Nueva embarcación</button>
+            </div>
+
+            <div id="boat-form-wrapper" style="margin-bottom:10px; display:none;">
+              <form id="boat-form">
+                <input type="hidden" id="boat-id" />
+                <div class="form-grid columns-2">
+                  <div class="field">
+                    <label for="boat-nib">NIB</label>
+                    <input type="text" id="boat-nib" required />
+                  </div>
+                  <div class="field">
+                    <label for="boat-name">Nombre</label>
+                    <input type="text" id="boat-name" required />
+                  </div>
+                  <div class="field">
+                    <label for="boat-owner">Propietario</label>
+                    <input type="text" id="boat-owner" />
+                  </div>
+                  <div class="field">
+                    <label>&nbsp;</label>
+                    <div style="display:flex; gap:6px;">
+                      <button type="submit" class="btn">Guardar</button>
+                      <button type="button" class="btn btn-outline" id="btn-cancel-boat">Cancelar</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div class="table-container" id="boats-table-container">
+              <!-- tabla barcos -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Documentos -->
+        <div class="section" id="section-documents">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Documentos</div>
+                <div class="card-subtitle">Vista completa de todos los certificados y caducidades.</div>
+              </div>
+              <button class="btn" id="btn-new-document">+ Nuevo documento</button>
+            </div>
+
+            <div id="document-form-wrapper" style="margin-bottom:10px; display:none;">
+              <form id="document-form">
+                <input type="hidden" id="doc-id" />
+                <div class="form-grid columns-2">
+                  <div class="field">
+                    <label for="doc-boat">Embarcación</label>
+                    <select id="doc-boat" required></select>
+                  </div>
+                  <div class="field">
+                    <label for="doc-type">Tipo de documento / certificado</label>
+                    <input type="text" id="doc-type" placeholder="Ej. CERTIFICADO DE CONFORMIDAD" required />
+                  </div>
+                  <div class="field">
+                    <label for="doc-category">Categoría</label>
+                    <select id="doc-category">
+                      <option value="">Sin categoría</option>
+                      <option value="SEGURIDAD">Seguridad</option>
+                      <option value="TRIPULACION">Tripulación</option>
+                      <option value="CERTIFICACIONES">Certificaciones</option>
+                      <option value="EQUIPOS">Equipos</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="doc-expiry">Fecha caducidad</label>
+                    <input type="date" id="doc-expiry" required />
+                  </div>
+                  <div class="field">
+                    <label for="doc-days-notice">Días de aviso</label>
+                    <input type="number" id="doc-days-notice" min="0" value="7" />
+                    <small>Días antes de la caducidad para enviar el aviso.</small>
+                  </div>
+                  <div class="field">
+                    <label for="doc-contact">Avisar a</label>
+                    <select id="doc-contact">
+                      <!-- contactos -->
+                    </select>
+                  </div>
+                  <div class="field" style="grid-column:1/-1;">
+                    <label for="doc-notes">Observaciones</label>
+                    <textarea id="doc-notes" placeholder="Notas internas (ej. TIENE PATRÓN, revisar balsa, etc.)"></textarea>
+                  </div>
+                  <div style="grid-column:1/-1; display:flex; gap:6px; margin-top:4px;">
+                    <button class="btn" type="submit">Guardar documento</button>
+                    <button class="btn btn-outline" type="button" id="btn-cancel-document">Cancelar</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div class="toolbar">
+              <div class="toolbar-group">
+                <select id="docs-filter-boat">
+                  <!-- barcos -->
+                </select>
+                <select id="docs-filter-status">
+                  <option value="">Estado: todos</option>
+                  <option value="expired">Caducados</option>
+                  <option value="soon">Próximos</option>
+                  <option value="ok">Vigentes</option>
+                </select>
+                <select id="docs-filter-category">
+                  <option value="">Categoría: todas</option>
+                  <option value="SEGURIDAD">Seguridad</option>
+                  <option value="TRIPULACION">Tripulación</option>
+                  <option value="CERTIFICACIONES">Certificaciones</option>
+                  <option value="EQUIPOS">Equipos</option>
+                </select>
+              </div>
+              <div class="toolbar-group">
+                <input type="text" id="docs-search" placeholder="Buscar por tipo / notas…" />
+              </div>
+            </div>
+
+            <div class="table-container" id="documents-table-container">
+              <!-- tabla docs -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Columna lateral -->
+      <section id="main-right">
+        <!-- Notificaciones / simulación -->
+        <div class="section active" id="section-dashboard-side">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Simulación de avisos</div>
+                <div class="card-subtitle">Vista previa de los emails / WhatsApp que se generarían hoy.</div>
+              </div>
+            </div>
+            <div id="simulation-results" class="notification-preview">
+              Pulsa “Simular avisos hoy” para ver qué documentos dispararían una notificación.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Contactos de prueba</div>
+                <div class="card-subtitle">Personas a las que se avisará.</div>
+              </div>
+              <button class="btn-outline btn" id="btn-new-contact">+ Nuevo contacto</button>
+            </div>
+
+            <div id="contact-form-wrapper" style="display:none; margin-bottom:8px;">
+              <form id="contact-form">
+                <input type="hidden" id="contact-id" />
+                <div class="form-grid columns-2">
+                  <div class="field">
+                    <label for="contact-name">Nombre</label>
+                    <input type="text" id="contact-name" required />
+                  </div>
+                  <div class="field">
+                    <label for="contact-email">Email</label>
+                    <input type="text" id="contact-email" />
+                  </div>
+                  <div class="field">
+                    <label for="contact-phone">Teléfono (WhatsApp)</label>
+                    <input type="text" id="contact-phone" />
+                  </div>
+                  <div class="field">
+                    <label for="contact-channel">Canal preferido</label>
+                    <select id="contact-channel">
+                      <option value="both">Email + WhatsApp</option>
+                      <option value="email">Sólo email</option>
+                      <option value="whatsapp">Sólo WhatsApp</option>
+                    </select>
+                  </div>
+                  <div style="grid-column:1/-1; display:flex; gap:6px; margin-top:4px;">
+                    <button class="btn" type="submit">Guardar contacto</button>
+                    <button class="btn btn-outline" type="button" id="btn-cancel-contact">Cancelar</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div id="contacts-list" class="empty">
+              <!-- listado por JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Configuración notificaciones -->
+        <div class="section" id="section-settings">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Plantillas de aviso</div>
+                <div class="card-subtitle">Estas plantillas se usarán para generar emails y mensajes de WhatsApp.</div>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="field">
+                <label for="tpl-email-subject">Asunto email</label>
+                <input type="text" id="tpl-email-subject" />
+                <small>Variables disponibles: <code>{{nombre_barco}}</code>, <code>{{nib}}</code>, <code>{{tipo}}</code>, <code>{{fecha}}</code>, <code>{{dias_restantes}}</code></small>
+              </div>
+              <div class="field">
+                <label for="tpl-email-body">Cuerpo email</label>
+                <textarea id="tpl-email-body"></textarea>
+              </div>
+              <div class="field">
+                <label for="tpl-whatsapp">Mensaje WhatsApp</label>
+                <textarea id="tpl-whatsapp"></textarea>
+              </div>
+              <div class="switch-row">
+                <input type="checkbox" id="tpl-send-expired" />
+                <span>Incluir también documentos que ya estén caducados en la simulación/envíos.</span>
+              </div>
+              <div style="margin-top:6px; display:flex; gap:6px;">
+                <button class="btn" id="btn-save-templates">Guardar plantillas</button>
+                <span class="muted">En un entorno real, estas plantillas se usarían desde una función programada (cron) en tu backend.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Front de prototipo · Datos guardados en este navegador (localStorage). Integración real de email/WhatsApp requiere backend.
+    </footer>
+  </div>
+
+  <script>
+    // ---------- Estado y utilidades ----------
+    const STORAGE_KEY = 'rolEmbarqueApp_v1';
+
+    let boats = [];
+    let documents = [];
+    let contacts = [];
+    let templates = {
+      emailSubject: 'AVISO: {{tipo}} · {{nombre_barco}} (NIB {{nib}}) caduca el {{fecha}}',
+      emailBody:
+        'Hola,\\n\\nEl documento {{tipo}} del barco {{nombre_barco}} (NIB {{nib}}) caduca el {{fecha}}.\\n' +
+        'Quedan {{dias_restantes}} días.\\n\\nPor favor, tramita la renovación correspondiente.\\n\\nGracias.\\n',
+      whatsapp:
+        'Hola, el documento {{tipo}} del barco {{nombre_barco}} (NIB {{nib}}) caduca el {{fecha}}. ' +
+        'Quedan {{dias_restantes}} días. Por favor, gestionad la renovación.',
+      includeExpired: false,
+    };
+
+    function uid(prefix = 'id') {
+      return prefix + '_' + Math.random().toString(36).slice(2, 10);
+    }
+
+    function daysBetweenToday(dateStr) {
+      if (!dateStr) return NaN;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return NaN;
+      d.setHours(0, 0, 0, 0);
+      const diffMs = d - today;
+      return Math.round(diffMs / (1000 * 60 * 60 * 24));
+    }
+
+    function getStatus(doc) {
+      const days = daysBetweenToday(doc.expiryDate);
+      if (isNaN(days)) {
+        return { level: 'unknown', label: 'Sin fecha' };
+      }
+      if (days < 0) {
+        return { level: 'expired', label: \`Caducado (\${days} días)\` };
+      }
+      const notice = Number(doc.daysNotice) || 0;
+      if (days <= notice) {
+        return { level: 'soon', label: \`Próximo (\${days} días)\` };
+      }
+      return { level: 'ok', label: \`Vigente (\${days} días)\` };
+    }
+
+    function getBoatById(id) {
+      return boats.find((b) => b.id === id) || null;
+    }
+
+    function getContactById(id) {
+      return contacts.find((c) => c.id === id) || null;
+    }
+
+    function saveState() {
+      const payload = { boats, documents, contacts, templates };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    }
+
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        seedDemoData();
+        return;
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        boats = parsed.boats || [];
+        documents = parsed.documents || [];
+        contacts = parsed.contacts || [];
+        templates = Object.assign(templates, parsed.templates || {});
+      } catch (e) {
+        console.error('Error cargando estado, se usa demo:', e);
+        seedDemoData();
+      }
+    }
+
+    function seedDemoData() {
+      const boat1 = {
+        id: uid('boat'),
+        nib: 'NIB-123456',
+        name: 'CABRACHO I',
+        owner: 'Armador Demo S.L.',
+      };
+      const boat2 = {
+        id: uid('boat'),
+        nib: 'NIB-789012',
+        name: 'POSIDONIA II',
+        owner: 'Armador Costa Azul',
+      };
+      const contact1 = {
+        id: uid('contact'),
+        name: 'Responsable Seguridad',
+        email: 'seguridad@example.com',
+        phone: '+34600111222',
+        channel: 'both',
+      };
+      const contact2 = {
+        id: uid('contact'),
+        name: 'Armador Demo',
+        email: 'armador@example.com',
+        phone: '',
+        channel: 'email',
+      };
+      const today = new Date();
+      const nextMonth = new Date(today);
+      nextMonth.setMonth(today.getMonth() + 1);
+      const lastWeek = new Date(today);
+      lastWeek.setDate(today.getDate() - 7);
+
+      function fmt(d) {
+        return d.toISOString().slice(0, 10);
+      }
+
+      boats = [boat1, boat2];
+      contacts = [contact1, contact2];
+      documents = [
+        {
+          id: uid('doc'),
+          boatId: boat1.id,
+          type: 'CERTIFICADO DE CONFORMIDAD',
+          category: 'CERTIFICACIONES',
+          expiryDate: fmt(nextMonth),
+          daysNotice: 30,
+          contactId: contact1.id,
+          notes: 'Certificación anual de conformidad.',
+        },
+        {
+          id: uid('doc'),
+          boatId: boat1.id,
+          type: 'BALSAS SALVAVIDAS',
+          category: 'SEGURIDAD',
+          expiryDate: fmt(lastWeek),
+          daysNotice: 7,
+          contactId: contact1.id,
+          notes: 'Revisar proveedor actual.',
+        },
+        {
+          id: uid('doc'),
+          boatId: boat2.id,
+          type: 'TRABAJADOR 1. RECONOCIMIENTO MÉDICO',
+          category: 'TRIPULACION',
+          expiryDate: fmt(nextMonth),
+          daysNotice: 15,
+          contactId: contact2.id,
+          notes: 'Caduca junto con el curso básico.',
+        },
+      ];
+      saveState();
+    }
+
+    // ---------- Tabs / secciones ----------
+    function initTabs() {
+      const tabs = document.querySelectorAll('.tab-btn');
+      tabs.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          tabs.forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          const target = btn.dataset.target;
+          setSection(target);
+        });
+      });
+    }
+
+    function setSection(name) {
+      const sections = {
+        dashboard: ['section-dashboard', 'section-dashboard-side'],
+        boats: ['section-boats', 'section-dashboard-side'],
+        documents: ['section-documents', 'section-dashboard-side'],
+        settings: ['section-settings', 'section-settings'],
+      };
+
+      document.querySelectorAll('.section').forEach((s) => s.classList.remove('active'));
+
+      const pair = sections[name] || sections.dashboard;
+      const mainId = pair[0];
+      const sideId = pair[1];
+
+      document.getElementById(mainId)?.classList.add('active');
+      document.getElementById(sideId)?.classList.add('active');
+    }
+
+    // ---------- Render Dashboard ----------
+    function renderStats() {
+      const statsEl = document.getElementById('stats-cards');
+      const totalDocs = documents.length;
+      let expired = 0;
+      let soon = 0;
+      let ok = 0;
+
+      documents.forEach((doc) => {
+        const st = getStatus(doc);
+        if (st.level === 'expired') expired++;
+        else if (st.level === 'soon') soon++;
+        else if (st.level === 'ok') ok++;
+      });
+
+      const byBoat = {};
+      documents.forEach((doc) => {
+        const boat = getBoatById(doc.boatId);
+        if (!boat) return;
+        if (!byBoat[boat.id]) byBoat[boat.id] = { total: 0, expired: 0 };
+        byBoat[boat.id].total++;
+        if (getStatus(doc).level === 'expired') byBoat[boat.id].expired++;
+      });
+
+      let worstBoat = null;
+      Object.keys(byBoat).forEach((id) => {
+        const boat = getBoatById(id);
+        if (!boat) return;
+        const data = byBoat[id];
+        const ratio = data.expired / data.total;
+        if (!worstBoat || ratio > worstBoat.ratio) {
+          worstBoat = { boat, ratio, expired: data.expired };
+        }
+      });
+
+      statsEl.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">Documentos totales</div>
+          <div class="stat-value">${totalDocs}</div>
+          <span class="stat-chip">Incluye caducados y próximos</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Caducados</div>
+          <div class="stat-value" style="color:var(--danger);">${expired}</div>
+          <span class="stat-chip">Revisión urgente recomendada</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Próximos a caducar</div>
+          <div class="stat-value" style="color:var(--warning);">${soon}</div>
+          <span class="stat-chip">Dentro del rango de aviso</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Vigentes</div>
+          <div class="stat-value" style="color:var(--success);">${ok}</div>
+          <span class="stat-chip">
+            ${
+              worstBoat
+                ? `Peor barco: ${worstBoat.boat.name} (${worstBoat.expired} caducados)`
+                : 'Todo bajo control'
+            }
+          </span>
+        </div>
+      `;
+    }
+
+    function renderDashboardFilters() {
+      const selectBoat = document.getElementById('dashboard-filter-boat');
+      selectBoat.innerHTML = `<option value="">Barco: todos</option>`;
+      boats.forEach((b) => {
+        const opt = document.createElement('option');
+        opt.value = b.id;
+        opt.textContent = b.nib + ' · ' + b.name;
+        selectBoat.appendChild(opt);
+      });
+    }
+
+    function renderDashboardTable() {
+      const statusFilter = document.getElementById('dashboard-filter-status').value;
+      const boatFilter = document.getElementById('dashboard-filter-boat').value;
+      const search = document.getElementById('dashboard-search').value.trim().toLowerCase();
+
+      const tableCtn = document.getElementById('dashboard-table-container');
+      if (!documents.length) {
+        tableCtn.innerHTML = `<div class="empty">No hay documentos todavía. Crea uno desde la pestaña “Documentos”.</div>`;
+        return;
+      }
+
+      let items = documents.slice();
+
+      items = items.filter((doc) => {
+        const st = getStatus(doc);
+        if (statusFilter && st.level !== statusFilter) return false;
+        if (boatFilter && doc.boatId !== boatFilter) return false;
+
+        if (search) {
+          const boat = getBoatById(doc.boatId);
+          const haystack = [
+            doc.type || '',
+            doc.category || '',
+            doc.notes || '',
+            boat ? boat.name : '',
+            boat ? boat.nib : '',
+          ]
+            .join(' ')
+            .toLowerCase();
+          if (!haystack.includes(search)) return false;
+        }
+        return true;
+      });
+
+      items.sort((a, b) => {
+        const da = daysBetweenToday(a.expiryDate);
+        const db = daysBetweenToday(b.expiryDate);
+        if (isNaN(da) && isNaN(db)) return 0;
+        if (isNaN(da)) return 1;
+        if (isNaN(db)) return -1;
+        return da - db;
+      });
+
+      const rows = items
+        .map((doc) => {
+          const boat = getBoatById(doc.boatId);
+          const st = getStatus(doc);
+          const boatLabel = boat ? `${boat.nib} · ${boat.name}` : '—';
+          const days = daysBetweenToday(doc.expiryDate);
+          return `
+          <tr>
+            <td>${boatLabel}</td>
+            <td>${doc.type || ''}</td>
+            <td>${doc.category ? `<span class="badge-category">${doc.category}</span>` : ''}</td>
+            <td>${doc.expiryDate || '—'}</td>
+            <td>${isNaN(days) ? '—' : days}</td>
+            <td><span class="chip-status ${st.level}">${st.label}</span></td>
+          </tr>`;
+        })
+        .join('');
+
+      tableCtn.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Embarcación</th>
+              <th>Documento</th>
+              <th>Categoría</th>
+              <th>Caducidad</th>
+              <th>Días</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>${rows || '<tr><td colspan="6" class="empty">Sin resultados con estos filtros.</td></tr>'}</tbody>
+        </table>
+      `;
+    }
+
+    // ---------- Embarcaciones ----------
+    function renderBoatsTable() {
+      const ctn = document.getElementById('boats-table-container');
+      if (!boats.length) {
+        ctn.innerHTML =
+          '<div class="empty">No hay embarcaciones todavía. Pulsa “Nueva embarcación” para crear la primera.</div>';
+        return;
+      }
+      const rows = boats
+        .map((b) => {
+          const docsForBoat = documents.filter((d) => d.boatId === b.id);
+          const expiredCount = docsForBoat.filter((d) => getStatus(d).level === 'expired').length;
+          return `
+          <tr>
+            <td>${b.nib}</td>
+            <td>${b.name}</td>
+            <td>${b.owner || '—'}</td>
+            <td>${docsForBoat.length}</td>
+            <td>${expiredCount ? `<span class="danger-text">${expiredCount} cad.</span>` : '0'}</td>
+            <td>
+              <div class="table-actions">
+                <button type="button" class="btn btn-outline" data-edit-boat="${b.id}">Editar</button>
+                <button type="button" class="btn btn-outline danger" data-delete-boat="${b.id}">Borrar</button>
+              </div>
+            </td>
+          </tr>`;
+        })
+        .join('');
+
+      ctn.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>NIB</th>
+              <th>Nombre</th>
+              <th>Propietario</th>
+              <th>Documentos</th>
+              <th>Caducados</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+
+      ctn.querySelectorAll('[data-edit-boat]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-edit-boat');
+          openBoatForm(id);
+        });
+      });
+
+      ctn.querySelectorAll('[data-delete-boat]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-delete-boat');
+          deleteBoat(id);
+        });
+      });
+    }
+
+    function openBoatForm(id = null) {
+      const wrapper = document.getElementById('boat-form-wrapper');
+      wrapper.style.display = 'block';
+      const form = document.getElementById('boat-form');
+      form.reset();
+      document.getElementById('boat-id').value = id || '';
+      if (id) {
+        const boat = getBoatById(id);
+        if (boat) {
+          document.getElementById('boat-nib').value = boat.nib || '';
+          document.getElementById('boat-name').value = boat.name || '';
+          document.getElementById('boat-owner').value = boat.owner || '';
+        }
+      }
+    }
+
+    function closeBoatForm() {
+      document.getElementById('boat-form-wrapper').style.display = 'none';
+      document.getElementById('boat-form').reset();
+      document.getElementById('boat-id').value = '';
+    }
+
+    function deleteBoat(id) {
+      const boat = getBoatById(id);
+      if (!boat) return;
+      const docsForBoat = documents.filter((d) => d.boatId === id);
+      const msg =
+        docsForBoat.length > 0
+          ? \`Esta embarcación tiene \${docsForBoat.length} documentos asociados. Se borrarán también. ¿Seguro?\`
+          : '¿Seguro que quieres borrar esta embarcación?';
+      if (!confirm(msg)) return;
+      boats = boats.filter((b) => b.id !== id);
+      documents = documents.filter((d) => d.boatId !== id);
+      saveState();
+      refreshUI();
+    }
+
+    function initBoatForm() {
+      document.getElementById('btn-new-boat').addEventListener('click', () => openBoatForm());
+      document.getElementById('btn-cancel-boat').addEventListener('click', closeBoatForm);
+      document.getElementById('boat-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('boat-id').value;
+        const nib = document.getElementById('boat-nib').value.trim();
+        const name = document.getElementById('boat-name').value.trim();
+        const owner = document.getElementById('boat-owner').value.trim();
+
+        if (!nib || !name) return;
+
+        if (id) {
+          const boat = getBoatById(id);
+          if (boat) {
+            boat.nib = nib;
+            boat.name = name;
+            boat.owner = owner;
+          }
+        } else {
+          boats.push({
+            id: uid('boat'),
+            nib,
+            name,
+            owner,
+          });
+        }
+        saveState();
+        closeBoatForm();
+        refreshUI();
+      });
+    }
+
+    // ---------- Documentos ----------
+    function renderBoatSelects() {
+      const docBoat = document.getElementById('doc-boat');
+      const docsFilterBoat = document.getElementById('docs-filter-boat');
+      const dashFilterBoat = document.getElementById('dashboard-filter-boat');
+
+      if (docBoat) {
+        docBoat.innerHTML = '';
+        boats.forEach((b) => {
+          const opt = document.createElement('option');
+          opt.value = b.id;
+          opt.textContent = `${b.nib} · ${b.name}`;
+          docBoat.appendChild(opt);
+        });
+      }
+
+      if (docsFilterBoat) {
+        docsFilterBoat.innerHTML = `<option value="">Barco: todos</option>`;
+        boats.forEach((b) => {
+          const opt = document.createElement('option');
+          opt.value = b.id;
+          opt.textContent = `${b.nib} · ${b.name}`;
+          docsFilterBoat.appendChild(opt);
+        });
+      }
+
+      if (dashFilterBoat) {
+        dashFilterBoat.innerHTML = `<option value="">Barco: todos</option>`;
+        boats.forEach((b) => {
+          const opt = document.createElement('option');
+          opt.value = b.id;
+          opt.textContent = `${b.nib} · ${b.name}`;
+          dashFilterBoat.appendChild(opt);
+        });
+      }
+    }
+
+    function renderContactSelect() {
+      const sel = document.getElementById('doc-contact');
+      if (!sel) return;
+      sel.innerHTML = '<option value="">Sin destinatario</option>';
+      contacts.forEach((c) => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `${c.name} (${c.channel})`;
+        sel.appendChild(opt);
+      });
+    }
+
+    function renderDocumentsTable() {
+      const boatFilter = document.getElementById('docs-filter-boat').value;
+      const statusFilter = document.getElementById('docs-filter-status').value;
+      const catFilter = document.getElementById('docs-filter-category').value;
+      const search = document.getElementById('docs-search').value.trim().toLowerCase();
+      const ctn = document.getElementById('documents-table-container');
+
+      if (!documents.length) {
+        ctn.innerHTML =
+          '<div class="empty">No hay documentos todavía. Usa el botón “Nuevo documento” para crear el primero.</div>';
+        return;
+      }
+
+      let items = documents.slice();
+
+      items = items.filter((doc) => {
+        const st = getStatus(doc);
+        if (boatFilter && doc.boatId !== boatFilter) return false;
+        if (statusFilter && st.level !== statusFilter) return false;
+        if (catFilter && doc.category !== catFilter) return false;
+        if (search) {
+          const boat = getBoatById(doc.boatId);
+          const haystack = [
+            doc.type || '',
+            doc.category || '',
+            doc.notes || '',
+            boat ? boat.name : '',
+            boat ? boat.nib : '',
+          ]
+            .join(' ')
+            .toLowerCase();
+          if (!haystack.includes(search)) return false;
+        }
+        return true;
+      });
+
+      items.sort((a, b) => {
+        const da = daysBetweenToday(a.expiryDate);
+        const db = daysBetweenToday(b.expiryDate);
+        if (isNaN(da) && isNaN(db)) return 0;
+        if (isNaN(da)) return 1;
+        if (isNaN(db)) return -1;
+        return da - db;
+      });
+
+      const rows = items
+        .map((doc) => {
+          const boat = getBoatById(doc.boatId);
+          const contact = getContactById(doc.contactId);
+          const st = getStatus(doc);
+          const days = daysBetweenToday(doc.expiryDate);
+          return `
+          <tr>
+            <td>${boat ? `<span class="badge-boat">${boat.nib}</span> ${boat.name}` : '—'}</td>
+            <td>${doc.type || ''}</td>
+            <td>${doc.category ? `<span class="badge-category">${doc.category}</span>` : ''}</td>
+            <td>${doc.expiryDate || '—'}</td>
+            <td>${isNaN(days) ? '—' : days}</td>
+            <td><span class="chip-status ${st.level}">${st.label}</span></td>
+            <td>${contact ? contact.name : '—'}</td>
+            <td>${doc.notes || '—'}</td>
+            <td>
+              <div class="table-actions">
+                <button type="button" class="btn btn-outline" data-edit-doc="${doc.id}">Editar</button>
+                <button type="button" class="btn btn-outline" data-renew-doc="${doc.id}">Renovar</button>
+                <button type="button" class="btn btn-outline danger" data-delete-doc="${doc.id}">Borrar</button>
+              </div>
+            </td>
+          </tr>`;
+        })
+        .join('');
+
+      ctn.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Embarcación</th>
+              <th>Documento</th>
+              <th>Categoría</th>
+              <th>Caducidad</th>
+              <th>Días</th>
+              <th>Estado</th>
+              <th>Avisar a</th>
+              <th>Notas</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>${rows || '<tr><td colspan="9" class="empty">Sin resultados con estos filtros.</td></tr>'}</tbody>
+        </table>
+      `;
+
+      ctn.querySelectorAll('[data-edit-doc]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-edit-doc');
+          openDocumentForm(id);
+        });
+      });
+
+      ctn.querySelectorAll('[data-renew-doc]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-renew-doc');
+          renewDocument(id);
+        });
+      });
+
+      ctn.querySelectorAll('[data-delete-doc]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-delete-doc');
+          deleteDocument(id);
+        });
+      });
+    }
+
+    function openDocumentForm(id = null) {
+      const wrapper = document.getElementById('document-form-wrapper');
+      wrapper.style.display = 'block';
+      const form = document.getElementById('document-form');
+      form.reset();
+      renderBoatSelects();
+      renderContactSelect();
+      document.getElementById('doc-id').value = id || '';
+
+      if (id) {
+        const doc = documents.find((d) => d.id === id);
+        if (doc) {
+          document.getElementById('doc-boat').value = doc.boatId;
+          document.getElementById('doc-type').value = doc.type || '';
+          document.getElementById('doc-category').value = doc.category || '';
+          document.getElementById('doc-expiry').value = doc.expiryDate || '';
+          document.getElementById('doc-days-notice').value = doc.daysNotice ?? 7;
+          document.getElementById('doc-contact').value = doc.contactId || '';
+          document.getElementById('doc-notes').value = doc.notes || '';
+        }
+      } else {
+        const boatSelect = document.getElementById('docs-filter-boat');
+        const selectedBoat = boatSelect.value;
+        if (selectedBoat) {
+          document.getElementById('doc-boat').value = selectedBoat;
+        }
+      }
+    }
+
+    function closeDocumentForm() {
+      document.getElementById('document-form-wrapper').style.display = 'none';
+      document.getElementById('document-form').reset();
+      document.getElementById('doc-id').value = '';
+    }
+
+    function renewDocument(id) {
+      const doc = documents.find((d) => d.id === id);
+      if (!doc) return;
+      let suggestion = '';
+      if (doc.expiryDate) {
+        const d = new Date(doc.expiryDate);
+        if (!isNaN(d.getTime())) {
+          d.setFullYear(d.getFullYear() + 1);
+          suggestion = d.toISOString().slice(0, 10);
+        }
+      }
+      const input = prompt(
+        'Introduce la nueva fecha de caducidad (YYYY-MM-DD):',
+        suggestion || doc.expiryDate || ''
+      );
+      if (!input) return;
+      doc.expiryDate = input;
+      saveState();
+      refreshUI();
+    }
+
+    function deleteDocument(id) {
+      const doc = documents.find((d) => d.id === id);
+      if (!doc) return;
+      const boat = getBoatById(doc.boatId);
+      const label = boat ? `${boat.name} – ${doc.type}` : doc.type;
+      if (!confirm(\`¿Seguro que quieres borrar el documento:\\n\\n\${label}?\`)) return;
+      documents = documents.filter((d) => d.id !== id);
+      saveState();
+      refreshUI();
+    }
+
+    function initDocumentForm() {
+      document.getElementById('btn-new-document').addEventListener('click', () => openDocumentForm());
+      document.getElementById('btn-cancel-document').addEventListener('click', closeDocumentForm);
+      document.getElementById('document-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('doc-id').value;
+        const boatId = document.getElementById('doc-boat').value;
+        const type = document.getElementById('doc-type').value.trim();
+        const category = document.getElementById('doc-category').value || '';
+        const expiry = document.getElementById('doc-expiry').value;
+        const daysNotice = Number(document.getElementById('doc-days-notice').value || 0);
+        const contactId = document.getElementById('doc-contact').value || '';
+        const notes = document.getElementById('doc-notes').value.trim();
+
+        if (!boatId || !type || !expiry) return;
+
+        if (id) {
+          const doc = documents.find((d) => d.id === id);
+          if (doc) {
+            doc.boatId = boatId;
+            doc.type = type;
+            doc.category = category;
+            doc.expiryDate = expiry;
+            doc.daysNotice = daysNotice;
+            doc.contactId = contactId;
+            doc.notes = notes;
+          }
+        } else {
+          documents.push({
+            id: uid('doc'),
+            boatId,
+            type,
+            category,
+            expiryDate: expiry,
+            daysNotice,
+            contactId,
+            notes,
+          });
+        }
+        saveState();
+        closeDocumentForm();
+        refreshUI();
+      });
+
+      // Filtros documentos
+      ['docs-filter-boat', 'docs-filter-status', 'docs-filter-category'].forEach((id) => {
+        document.getElementById(id).addEventListener('change', renderDocumentsTable);
+      });
+      document.getElementById('docs-search').addEventListener('input', renderDocumentsTable);
+    }
+
+    // ---------- Contactos ----------
+    function renderContactsList() {
+      const ctn = document.getElementById('contacts-list');
+      if (!contacts.length) {
+        ctn.innerHTML = '<div class="empty">Sin contactos. Crea alguno para probar las notificaciones.</div>';
+        return;
+      }
+      const items = contacts
+        .map((c) => {
+          return `
+          <div style="padding:6px 0; border-bottom:1px solid rgba(226,232,240,0.9); display:flex; justify-content:space-between; gap:8px;">
+            <div>
+              <div style="font-size:12px; font-weight:600;">${c.name}</div>
+              <div class="muted">
+                ${c.email ? '✉ ' + c.email : ''}
+                ${c.phone ? ' · 📱 ' + c.phone : ''}
+              </div>
+              <div class="badge" style="margin-top:2px;">Canal: ${c.channel}</div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <button class="btn btn-outline" data-edit-contact="${c.id}">Editar</button>
+              <button class="btn btn-outline danger" data-delete-contact="${c.id}">Borrar</button>
+            </div>
+          </div>`;
+        })
+        .join('');
+      ctn.innerHTML = items;
+
+      ctn.querySelectorAll('[data-edit-contact]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-edit-contact');
+          openContactForm(id);
+        });
+      });
+
+      ctn.querySelectorAll('[data-delete-contact]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-delete-contact');
+          deleteContact(id);
+        });
+      });
+    }
+
+    function openContactForm(id = null) {
+      const wrapper = document.getElementById('contact-form-wrapper');
+      wrapper.style.display = 'block';
+      const form = document.getElementById('contact-form');
+      form.reset();
+      document.getElementById('contact-id').value = id || '';
+      if (id) {
+        const c = getContactById(id);
+        if (c) {
+          document.getElementById('contact-name').value = c.name || '';
+          document.getElementById('contact-email').value = c.email || '';
+          document.getElementById('contact-phone').value = c.phone || '';
+          document.getElementById('contact-channel').value = c.channel || 'both';
+        }
+      }
+    }
+
+    function closeContactForm() {
+      document.getElementById('contact-form-wrapper').style.display = 'none';
+      document.getElementById('contact-form').reset();
+      document.getElementById('contact-id').value = '';
+    }
+
+    function deleteContact(id) {
+      const c = getContactById(id);
+      if (!c) return;
+      if (!confirm(\`¿Borrar contacto "\${c.name}"?\`)) return;
+      contacts = contacts.filter((x) => x.id !== id);
+      documents.forEach((d) => {
+        if (d.contactId === id) d.contactId = '';
+      });
+      saveState();
+      renderContactsList();
+      renderContactSelect();
+      renderDocumentsTable();
+      renderDashboardTable();
+    }
+
+    function initContactForm() {
+      document.getElementById('btn-new-contact').addEventListener('click', () => openContactForm());
+      document.getElementById('btn-cancel-contact').addEventListener('click', closeContactForm);
+      document.getElementById('contact-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('contact-id').value;
+        const name = document.getElementById('contact-name').value.trim();
+        const email = document.getElementById('contact-email').value.trim();
+        const phone = document.getElementById('contact-phone').value.trim();
+        const channel = document.getElementById('contact-channel').value || 'both';
+        if (!name) return;
+        if (id) {
+          const c = getContactById(id);
+          if (c) {
+            c.name = name;
+            c.email = email;
+            c.phone = phone;
+            c.channel = channel;
+          }
+        } else {
+          contacts.push({
+            id: uid('contact'),
+            name,
+            email,
+            phone,
+            channel,
+          });
+        }
+        saveState();
+        closeContactForm();
+        renderContactsList();
+        renderContactSelect();
+      });
+    }
+
+    // ---------- Plantillas / simulación ----------
+    function loadTemplatesIntoForm() {
+      document.getElementById('tpl-email-subject').value = templates.emailSubject || '';
+      document.getElementById('tpl-email-body').value = templates.emailBody || '';
+      document.getElementById('tpl-whatsapp').value = templates.whatsapp || '';
+      document.getElementById('tpl-send-expired').checked = !!templates.includeExpired;
+    }
+
+    function initTemplatesForm() {
+      document.getElementById('btn-save-templates').addEventListener('click', () => {
+        templates.emailSubject =
+          document.getElementById('tpl-email-subject').value ||
+          'AVISO: {{tipo}} · {{nombre_barco}} (NIB {{nib}}) caduca el {{fecha}}';
+        templates.emailBody =
+          document.getElementById('tpl-email-body').value || templates.emailBody || '';
+        templates.whatsapp =
+          document.getElementById('tpl-whatsapp').value || templates.whatsapp || '';
+        templates.includeExpired = document.getElementById('tpl-send-expired').checked;
+        saveState();
+        alert('Plantillas guardadas (en este navegador).');
+      });
+
+      document.getElementById('btn-simulate').addEventListener('click', simulateNotifications);
+    }
+
+    function formatTemplate(str, data) {
+      return str
+        .replaceAll('{{nombre_barco}}', data.nombre_barco || '')
+        .replaceAll('{{nib}}', data.nib || '')
+        .replaceAll('{{tipo}}', data.tipo || '')
+        .replaceAll('{{fecha}}', data.fecha || '')
+        .replaceAll('{{dias_restantes}}', data.dias_restantes != null ? String(data.dias_restantes) : '');
+    }
+
+    function simulateNotifications() {
+      const resultsEl = document.getElementById('simulation-results');
+      const lines = [];
+      const includeExpired = !!templates.includeExpired;
+
+      documents.forEach((doc) => {
+        const d = daysBetweenToday(doc.expiryDate);
+        if (isNaN(d)) return;
+
+        const st = getStatus(doc);
+        const contact = getContactById(doc.contactId);
+        const boat = getBoatById(doc.boatId);
+        if (!contact) return;
+
+        const notice = Number(doc.daysNotice) || 0;
+
+        const matchesNotice = d <= notice && d >= 0;
+        const isExpired = d < 0;
+
+        if (!matchesNotice && !(includeExpired && isExpired)) return;
+
+        const context = {
+          nombre_barco: boat ? boat.name : '',
+          nib: boat ? boat.nib : '',
+          tipo: doc.type || '',
+          fecha: doc.expiryDate || '',
+          dias_restantes: d,
+        };
+
+        const subj = formatTemplate(templates.emailSubject, context);
+        const body = formatTemplate(templates.emailBody, context);
+        const wa = formatTemplate(templates.whatsapp, context);
+
+        lines.push(
+          '──────────────────────────────\\n' +
+            \`DOCUMENTO: \${doc.type} (\${st.label})\\n\` +
+            \`BARCO: \${boat ? boat.name + ' – NIB ' + boat.nib : '—'}\\n\` +
+            \`DESTINATARIO: \${contact.name} [\${contact.channel}]\\n\` +
+            (contact.email ? \`Email: \${contact.email}\\n\` : '') +
+            (contact.phone ? \`Teléfono: \${contact.phone}\\n\` : '') +
+            '\\n[EMAIL]\\n' +
+            'Asunto: ' +
+            subj +
+            '\\n\\n' +
+            body +
+            '\\n\\n[WHATSAPP]\\n' +
+            wa +
+            '\\n'
+        );
+      });
+
+      if (!lines.length) {
+        resultsEl.textContent =
+          'Hoy no se generaría ningún aviso con la configuración actual (rango de días de aviso y plantillas).';
+      } else {
+        resultsEl.textContent = lines.join('\\n');
+      }
+    }
+
+    // ---------- Dashboard filtros ----------
+    function initDashboardFilters() {
+      document.getElementById('dashboard-filter-status').addEventListener('change', renderDashboardTable);
+      document.getElementById('dashboard-filter-boat').addEventListener('change', renderDashboardTable);
+      document.getElementById('dashboard-search').addEventListener('input', renderDashboardTable);
+    }
+
+    // ---------- UI global ----------
+    function refreshUI() {
+      renderStats();
+      renderDashboardFilters();
+      renderDashboardTable();
+      renderBoatsTable();
+      renderBoatSelects();
+      renderContactSelect();
+      renderDocumentsTable();
+      renderContactsList();
+      loadTemplatesIntoForm();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      initTabs();
+      initBoatForm();
+      initDocumentForm();
+      initContactForm();
+      initTemplatesForm();
+      initDashboardFilters();
+      refreshUI();
+    });
+  </script>
+</body>
+</html>
